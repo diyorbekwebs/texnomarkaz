@@ -8,7 +8,7 @@ import TabletIcon from "@mui/icons-material/Tablet";
 import WatchIcon from "@mui/icons-material/Watch";
 import HeadphonesIcon from "@mui/icons-material/Headphones";
 import MemoryIcon from "@mui/icons-material/Memory";
-
+import { useNavigate } from "react-router-dom";
 const Section = styled.section`
   padding: 40px 0;
   background: ${colors.grayLight};
@@ -20,8 +20,12 @@ const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 16px;
-  @media(max-width: 900px) { grid-template-columns: repeat(3, 1fr); }
-  @media(max-width: 480px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 `;
 
 const Card = styled.div`
@@ -37,7 +41,7 @@ const Card = styled.div`
   transition: all 0.2s;
   &:hover {
     border-color: ${colors.primary};
-    box-shadow: 0 4px 16px rgba(37,99,235,0.1);
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.1);
     transform: translateY(-3px);
   }
 `;
@@ -50,11 +54,16 @@ const IconBox = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  svg { color: ${colors.primary}; font-size: 28px; }
+  svg {
+    color: ${colors.primary};
+    font-size: 28px;
+  }
   transition: all 0.2s;
   ${Card}:hover & {
     background: ${colors.primary};
-    svg { color: #fff; }
+    svg {
+      color: #fff;
+    }
   }
 `;
 
@@ -64,7 +73,11 @@ const ImgBox = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  img { width: 100%; height: 100%; object-fit: contain; }
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
 `;
 
 const CatName = styled.p`
@@ -75,16 +88,47 @@ const CatName = styled.p`
 `;
 
 const categories = [
-  { id: 1, name: { uz: "Smartfonlar", ru: "Смартфоны", en: "Smartphones" }, icon: <SmartphoneIcon />, img: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-16-finish-select-202409-6-1inch-black?wid=200&hei=200&fmt=p-jpg" },
-  { id: 2, name: { uz: "Kompyuterlar", ru: "Компьютеры", en: "Computers" }, icon: <LaptopIcon />, img: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/mbp14-spaceblack-select-202310?wid=200&hei=200&fmt=jpeg" },
-  { id: 3, name: { uz: "Planshetlar", ru: "Планшеты", en: "Tablets" }, icon: <TabletIcon />, img: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/ipad-pro-13-select-wifi-spacegray-202405?wid=200&hei=200&fmt=jpeg" },
-  { id: 4, name: { uz: "Aqlli soat", ru: "Умные часы", en: "Smart Watch" }, icon: <WatchIcon />, img: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MR9A3?wid=200&hei=200&fmt=jpeg" },
-  { id: 5, name: { uz: "Naushniklar", ru: "Наушники", en: "Headphones" }, icon: <HeadphonesIcon />, img: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MQD83?wid=200&hei=200&fmt=jpeg" },
-  { id: 6, name: { uz: "Aksessuarlar", ru: "Аксессуары", en: "Accessories" }, icon: <MemoryIcon />, img: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MQGU3?wid=200&hei=200&fmt=jpeg" },
+  {
+    id: 1,
+    name: { uz: "Smartfonlar", ru: "Смартфоны", en: "Smartphones" },
+    icon: <SmartphoneIcon />,
+    img: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-16-finish-select-202409-6-1inch-black?wid=200&hei=200&fmt=p-jpg",
+  },
+  {
+    id: 2,
+    name: { uz: "Kompyuterlar", ru: "Компьютеры", en: "Computers" },
+    icon: <LaptopIcon />,
+    img: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/mbp14-spaceblack-select-202310?wid=200&hei=200&fmt=jpeg",
+  },
+  {
+    id: 3,
+    name: { uz: "Planshetlar", ru: "Планшеты", en: "Tablets" },
+    icon: <TabletIcon />,
+    img: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/ipad-pro-13-select-wifi-spacegray-202405?wid=200&hei=200&fmt=jpeg",
+  },
+  {
+    id: 4,
+    name: { uz: "Aqlli soat", ru: "Умные часы", en: "Smart Watch" },
+    icon: <WatchIcon />,
+    img: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MR9A3?wid=200&hei=200&fmt=jpeg",
+  },
+  {
+    id: 5,
+    name: { uz: "Naushniklar", ru: "Наушники", en: "Headphones" },
+    icon: <HeadphonesIcon />,
+    img: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MQD83?wid=200&hei=200&fmt=jpeg",
+  },
+  {
+    id: 6,
+    name: { uz: "Aksessuarlar", ru: "Аксессуары", en: "Accessories" },
+    icon: <MemoryIcon />,
+    img: "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MQGU3?wid=200&hei=200&fmt=jpeg",
+  },
 ];
 
 export default function Categories() {
   const { i18n } = useTranslation();
+  const navigate = useNavigate();
   const lang = i18n.language?.split("-")[0] || "uz";
 
   return (
@@ -92,7 +136,7 @@ export default function Categories() {
       <div className="container">
         <Grid>
           {categories.map((cat) => (
-            <Card key={cat.id}>
+            <Card onClick={() => navigate(`/catalog?category=${cat.id}`)}>
               <ImgBox>
                 <img src={cat.img} alt={cat.name[lang]} />
               </ImgBox>

@@ -3,8 +3,13 @@ import { Logo } from "../../assets/img/img";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "./LanguageSwitcher";
 import {
-  Box, IconButton, Drawer, List, ListItem,
-  ListItemText, Collapse,
+  Box,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  Collapse,
 } from "@mui/material";
 import styled, { keyframes, createGlobalStyle } from "styled-components";
 import { tophead } from "../../constant/header";
@@ -20,6 +25,8 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import PhoneIcon from "@mui/icons-material/Phone";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 // ── Google Font ──────────────────────────────────────
 const GlobalStyle = createGlobalStyle`
@@ -45,7 +52,7 @@ const fadeInDown = keyframes`
 const Overlay = styled.div`
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.45);
+  background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(6px);
   z-index: 9999;
   display: flex;
@@ -61,7 +68,7 @@ const ModalBox = styled.div`
   width: 100%;
   max-width: 640px;
   margin: 0 16px;
-  box-shadow: 0 32px 80px rgba(0,0,0,0.22);
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.22);
   overflow: hidden;
   animation: ${slideDown} 0.28s cubic-bezier(0.34, 1.4, 0.64, 1);
 `;
@@ -81,9 +88,12 @@ const ModalInput = styled.input`
   font-size: 17px;
   color: #111;
   background: transparent;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: 500;
-  &::placeholder { color: #c0c0c0; font-weight: 400; }
+  &::placeholder {
+    color: #c0c0c0;
+    font-weight: 400;
+  }
 `;
 
 const Kbd = styled.kbd`
@@ -93,7 +103,7 @@ const Kbd = styled.kbd`
   padding: 3px 7px;
   font-size: 11px;
   color: #777;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 `;
 
 const ModalBody = styled.div`
@@ -123,7 +133,7 @@ const Tag = styled.button`
   font-size: 13px;
   color: #444;
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: 500;
   transition: all 0.15s;
   &:hover {
@@ -131,7 +141,7 @@ const Tag = styled.button`
     border-color: #1976d2;
     color: #1976d2;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(25,118,210,0.15);
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.15);
   }
 `;
 
@@ -153,18 +163,24 @@ const TopBarLinks = styled.ul`
   align-items: center;
   gap: 6px;
   list-style: none;
-  margin: 0; padding: 0;
+  margin: 0;
+  padding: 0;
   li {
     cursor: pointer;
     font-size: 12px;
     font-weight: 500;
-    color: rgba(255,255,255,0.75);
+    color: rgba(255, 255, 255, 0.75);
     padding: 3px 8px;
     border-radius: 6px;
     transition: all 0.2s;
-    &:hover { color: #fff; background: rgba(255,255,255,0.12); }
+    &:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.12);
+    }
   }
-  @media (max-width: 768px) { display: none; }
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const SocialRow = styled.div`
@@ -173,31 +189,38 @@ const SocialRow = styled.div`
   gap: 6px;
   svg {
     font-size: 16px;
-    color: rgba(255,255,255,0.65);
+    color: rgba(255, 255, 255, 0.65);
     cursor: pointer;
     transition: all 0.2s;
-    &:hover { color: #fff; transform: scale(1.2); }
+    &:hover {
+      color: #fff;
+      transform: scale(1.2);
+    }
   }
 `;
 
 const PhoneText = styled.a`
   font-size: 12px;
   font-weight: 600;
-  color: rgba(255,255,255,0.85);
+  color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
   display: flex;
   align-items: center;
   gap: 5px;
   transition: color 0.2s;
-  &:hover { color: #fff; }
-  @media (max-width: 900px) { display: none; }
+  &:hover {
+    color: #fff;
+  }
+  @media (max-width: 900px) {
+    display: none;
+  }
 `;
 
 // ── Main + Nav merged bar ────────────────────────────
 const MainBar = styled.div`
   background: #fff;
   border-bottom: 1px solid #f0f0f0;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -216,7 +239,10 @@ const LogoImg = styled.img`
   cursor: pointer;
   flex-shrink: 0;
   margin-right: 24px;
-  @media (max-width: 768px) { width: 80px; margin-right: 12px; }
+  @media (max-width: 768px) {
+    width: 80px;
+    margin-right: 12px;
+  }
 `;
 
 // Nav links (desktop)
@@ -224,11 +250,14 @@ const NavList = styled.ul`
   display: flex;
   align-items: center;
   list-style: none;
-  margin: 0; padding: 0;
+  margin: 0;
+  padding: 0;
   height: 100%;
   gap: 0;
   flex-shrink: 0;
-  @media (max-width: 1100px) { display: none; }
+  @media (max-width: 1100px) {
+    display: none;
+  }
 `;
 
 const NavItem = styled.li`
@@ -248,9 +277,15 @@ const NavItem = styled.li`
   &:hover {
     color: #1976d2;
     border-bottom: 2px solid #1976d2;
-    > ul { display: block; }
+    > ul {
+      display: block;
+    }
   }
-  svg { font-size: 14px; color: #bbb; margin-top: 1px; }
+  svg {
+    font-size: 14px;
+    color: #bbb;
+    margin-top: 1px;
+  }
 `;
 
 const DropdownMenu = styled.ul`
@@ -260,9 +295,10 @@ const DropdownMenu = styled.ul`
   left: 0;
   background: white;
   border-radius: 0 0 14px 14px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
   list-style: none;
-  margin: 0; padding: 8px 0;
+  margin: 0;
+  padding: 8px 0;
   min-width: 200px;
   z-index: 9999;
   border-top: 2px solid #1976d2;
@@ -275,7 +311,11 @@ const DropdownMenu = styled.ul`
     white-space: nowrap;
     font-weight: 500;
     transition: all 0.15s;
-    &:hover { background: #f0f7ff; color: #1976d2; padding-left: 24px; }
+    &:hover {
+      background: #f0f7ff;
+      color: #1976d2;
+      padding-left: 24px;
+    }
   }
 `;
 
@@ -294,16 +334,18 @@ const SearchTrigger = styled.button`
   cursor: pointer;
   font-size: 13.5px;
   color: #bbb;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-weight: 400;
   transition: all 0.2s;
   &:hover {
     border-color: #1976d2;
     background: #fff;
-    box-shadow: 0 0 0 3px rgba(25,118,210,0.08);
+    box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.08);
     color: #999;
   }
-  @media (max-width: 768px) { margin: 0 8px; }
+  @media (max-width: 768px) {
+    margin: 0 8px;
+  }
 `;
 
 const ShortcutHint = styled.div`
@@ -312,7 +354,9 @@ const ShortcutHint = styled.div`
   align-items: center;
   gap: 3px;
   flex-shrink: 0;
-  @media (max-width: 600px) { display: none; }
+  @media (max-width: 600px) {
+    display: none;
+  }
 `;
 
 // Icon buttons right side
@@ -334,23 +378,32 @@ const IconBtn = styled.div`
   padding: 6px 10px;
   border-radius: 10px;
   transition: all 0.2s;
-  &:hover { background: #f0f7ff; transform: translateY(-2px); }
+  &:hover {
+    background: #f0f7ff;
+    transform: translateY(-2px);
+  }
   span {
     font-size: 10px;
     color: #999;
     font-weight: 500;
     line-height: 1;
   }
-  svg { color: #444; font-size: 21px; }
+  svg {
+    color: #444;
+    font-size: 21px;
+  }
   @media (max-width: 900px) {
-    span { display: none; }
+    span {
+      display: none;
+    }
     padding: 6px;
   }
 `;
 
 const Badge = styled.div`
   position: absolute;
-  top: 3px; right: 7px;
+  top: 3px;
+  right: 7px;
   background: #e53935;
   color: #fff;
   font-size: 9px;
@@ -362,46 +415,86 @@ const Badge = styled.div`
   justify-content: center;
   padding: 0 3px;
   font-weight: 700;
-  @media (max-width: 900px) { right: 3px; }
+  @media (max-width: 900px) {
+    right: 3px;
+  }
 `;
 
 const Divider = styled.div`
-  width: 1px; height: 28px;
+  width: 1px;
+  height: 28px;
   background: #eee;
   margin: 0 2px;
-  @media (max-width: 900px) { display: none; }
+  @media (max-width: 900px) {
+    display: none;
+  }
 `;
 
 const MobileMenuBtn = styled(IconButton)`
   display: none !important;
-  @media (max-width: 1100px) { display: flex !important; }
+  @media (max-width: 1100px) {
+    display: flex !important;
+  }
 `;
 
 // ── Data ─────────────────────────────────────────────
 const navCategories = [
-  { id: 1, label: { uz: "Hammasi", ru: "Все", en: "All" }, children: [
-    { id: 11, label: { uz: "iPhone", ru: "iPhone", en: "iPhone" } },
-    { id: 12, label: { uz: "MacBook", ru: "MacBook", en: "MacBook" } },
-    { id: 13, label: { uz: "iPad", ru: "iPad", en: "iPad" } },
-  ]},
-  { id: 2, label: { uz: "Smartfonlar", ru: "Смартфоны", en: "Phones" }, children: [
-    { id: 21, label: { uz: "Apple", ru: "Apple", en: "Apple" } },
-    { id: 22, label: { uz: "Samsung", ru: "Samsung", en: "Samsung" } },
-    { id: 23, label: { uz: "Xiaomi", ru: "Xiaomi", en: "Xiaomi" } },
-  ]},
-  { id: 3, label: { uz: "Noutbuklar", ru: "Ноутбуки", en: "Laptops" }, children: [
-    { id: 31, label: { uz: "MacBook", ru: "MacBook", en: "MacBook" } },
-    { id: 32, label: { uz: "Dell", ru: "Dell", en: "Dell" } },
-  ]},
-  { id: 4, label: { uz: "Aksessuarlar", ru: "Аксессуары", en: "Accessories" }, children: [
-    { id: 41, label: { uz: "Quloqchinlar", ru: "Наушники", en: "Earphones" } },
-    { id: 42, label: { uz: "Chexollar", ru: "Чехлы", en: "Cases" } },
-  ]},
-  { id: 5, label: { uz: "🔥 Aksiya", ru: "🔥 Акции", en: "🔥 Sales" }, children: [] },
-  { id: 6, label: { uz: "Yangiliklar", ru: "Новости", en: "News" }, children: [] },
+  {
+    id: 1,
+    label: { uz: "Hammasi", ru: "Все", en: "All" },
+    children: [
+      { id: 11, label: { uz: "iPhone", ru: "iPhone", en: "iPhone" } },
+      { id: 12, label: { uz: "MacBook", ru: "MacBook", en: "MacBook" } },
+      { id: 13, label: { uz: "iPad", ru: "iPad", en: "iPad" } },
+    ],
+  },
+  {
+    id: 2,
+    label: { uz: "Smartfonlar", ru: "Смартфоны", en: "Phones" },
+    children: [
+      { id: 21, label: { uz: "Apple", ru: "Apple", en: "Apple" } },
+      { id: 22, label: { uz: "Samsung", ru: "Samsung", en: "Samsung" } },
+      { id: 23, label: { uz: "Xiaomi", ru: "Xiaomi", en: "Xiaomi" } },
+    ],
+  },
+  {
+    id: 3,
+    label: { uz: "Noutbuklar", ru: "Ноутбуки", en: "Laptops" },
+    children: [
+      { id: 31, label: { uz: "MacBook", ru: "MacBook", en: "MacBook" } },
+      { id: 32, label: { uz: "Dell", ru: "Dell", en: "Dell" } },
+    ],
+  },
+  {
+    id: 4,
+    label: { uz: "Aksessuarlar", ru: "Аксессуары", en: "Accessories" },
+    children: [
+      {
+        id: 41,
+        label: { uz: "Quloqchinlar", ru: "Наушники", en: "Earphones" },
+      },
+      { id: 42, label: { uz: "Chexollar", ru: "Чехлы", en: "Cases" } },
+    ],
+  },
+  {
+    id: 5,
+    label: { uz: "🔥 Aksiya", ru: "🔥 Акции", en: "🔥 Sales" },
+    children: [],
+  },
+  {
+    id: 6,
+    label: { uz: "Yangiliklar", ru: "Новости", en: "News" },
+    children: [],
+  },
 ];
 
-const quickSearches = ["iPhone 15", "MacBook Pro", "Samsung S24", "AirPods Pro", "iPad Air"];
+const quickSearches = [
+  "iPhone 15",
+  "MacBook Pro",
+  "Samsung S24",
+  "AirPods Pro",
+  "iPad Air",
+];
 
 // ── Search Modal Component ────────────────────────────
 function SearchModal({ open, onClose, lang }) {
@@ -419,7 +512,9 @@ function SearchModal({ open, onClose, lang }) {
   }, [open]);
 
   useEffect(() => {
-    const fn = (e) => { if (e.key === "Escape") onClose(); };
+    const fn = (e) => {
+      if (e.key === "Escape") onClose();
+    };
     window.addEventListener("keydown", fn);
     return () => window.removeEventListener("keydown", fn);
   }, [onClose]);
@@ -427,8 +522,11 @@ function SearchModal({ open, onClose, lang }) {
   if (!open) return null;
 
   const placeholder =
-    lang === "uz" ? "Mahsulot qidirish..." :
-    lang === "ru" ? "Поиск товаров..." : "Search products...";
+    lang === "uz"
+      ? "Mahsulot qidirish..."
+      : lang === "ru"
+        ? "Поиск товаров..."
+        : "Search products...";
 
   return (
     <Overlay onClick={onClose}>
@@ -441,20 +539,41 @@ function SearchModal({ open, onClose, lang }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
-          <Box sx={{ display: "flex", alignItems: "center", gap: "4px", flexShrink: 0 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+              flexShrink: 0,
+            }}
+          >
             <Kbd>ESC</Kbd>
           </Box>
-          <IconButton size="small" onClick={onClose} sx={{ color: "#ccc", "&:hover": { color: "#333", transform: "rotate(90deg)" }, transition: "all 0.2s" }}>
+          <IconButton
+            size="small"
+            onClick={onClose}
+            sx={{
+              color: "#ccc",
+              "&:hover": { color: "#333", transform: "rotate(90deg)" },
+              transition: "all 0.2s",
+            }}
+          >
             <CloseIcon fontSize="small" />
           </IconButton>
         </ModalHeader>
         <ModalBody>
           <QuickLabel>
-            {lang === "uz" ? "Tezkor qidiruv" : lang === "ru" ? "Быстрый поиск" : "Quick search"}
+            {lang === "uz"
+              ? "Tezkor qidiruv"
+              : lang === "ru"
+                ? "Быстрый поиск"
+                : "Quick search"}
           </QuickLabel>
           <QuickTags>
             {quickSearches.map((tag) => (
-              <Tag key={tag} onClick={() => setQuery(tag)}>🔍 {tag}</Tag>
+              <Tag key={tag} onClick={() => setQuery(tag)}>
+                🔍 {tag}
+              </Tag>
             ))}
           </QuickTags>
         </ModalBody>
@@ -466,17 +585,26 @@ function SearchModal({ open, onClose, lang }) {
 // ── Main Header ──────────────────────────────────────
 export default function Header() {
   const { i18n } = useTranslation();
+  const navigate = useNavigate();
   const lang = i18n.language?.split("-")[0] || "uz";
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [openMobileMenu, setOpenMobileMenu] = useState(null);
+  const cartCount = useSelector((state) =>
+    state.cart.items.reduce((sum, i) => sum + i.qty, 0),
+  );
+  const wishCount = useSelector((state) => state.wishlist.items.length);
 
-  const isMac = typeof navigator !== "undefined" &&
+  const isMac =
+    typeof navigator !== "undefined" &&
     navigator.platform?.toUpperCase().includes("MAC");
 
   const placeholder =
-    lang === "uz" ? "Mahsulot qidirish..." :
-    lang === "ru" ? "Поиск товаров..." : "Search products...";
+    lang === "uz"
+      ? "Mahsulot qidirish..."
+      : lang === "ru"
+        ? "Поиск товаров..."
+        : "Search products...";
 
   useEffect(() => {
     const fn = (e) => {
@@ -492,7 +620,11 @@ export default function Header() {
   return (
     <>
       <GlobalStyle />
-      <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} lang={lang} />
+      <SearchModal
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        lang={lang}
+      />
 
       <header>
         {/* ── TopBar ── */}
@@ -525,14 +657,13 @@ export default function Header() {
         <MainBar>
           <div className="container">
             <MainBarInner>
-
               {/* Logo */}
               <LogoImg src={Logo} alt="Logo" />
 
               {/* Nav links */}
               <NavList>
                 {navCategories.map((cat) => (
-                  <NavItem key={cat.id}>
+                  <NavItem key={cat.id} onClick={() => navigate("/catalog")}>
                     {cat.label[lang]}
                     {cat.children.length > 0 && <ExpandMoreIcon />}
                     {cat.children.length > 0 && (
@@ -548,8 +679,16 @@ export default function Header() {
 
               {/* Search trigger */}
               <SearchTrigger onClick={() => setSearchOpen(true)}>
-                <SearchIcon sx={{ color: "#bbb", fontSize: 18, flexShrink: 0 }} />
-                <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <SearchIcon
+                  sx={{ color: "#bbb", fontSize: 18, flexShrink: 0 }}
+                />
+                <span
+                  style={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
                   {placeholder}
                 </span>
                 <ShortcutHint>
@@ -562,35 +701,81 @@ export default function Header() {
               <IconGroup>
                 <IconBtn>
                   <FavoriteIcon />
-                  <span>{lang === "uz" ? "Sevimli" : lang === "ru" ? "Избранное" : "Wishlist"}</span>
+                  <span>
+                    {lang === "uz"
+                      ? "Sevimli"
+                      : lang === "ru"
+                        ? "Избранное"
+                        : "Wishlist"}
+                  </span>
                 </IconBtn>
                 <Divider />
                 <IconBtn>
                   <ShoppingCartIcon />
                   <Badge>3</Badge>
-                  <span>{lang === "uz" ? "Savat" : lang === "ru" ? "Корзина" : "Cart"}</span>
+                  <span>
+                    {lang === "uz"
+                      ? "Savat"
+                      : lang === "ru"
+                        ? "Корзина"
+                        : "Cart"}
+                  </span>
                 </IconBtn>
-                <MobileMenuBtn onClick={() => setDrawerOpen(true)} sx={{ ml: 1 }}>
+                <MobileMenuBtn
+                  onClick={() => setDrawerOpen(true)}
+                  sx={{ ml: 1 }}
+                >
                   <MenuIcon />
                 </MobileMenuBtn>
               </IconGroup>
-
             </MainBarInner>
           </div>
         </MainBar>
 
         {/* ── Mobile Drawer ── */}
-        <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-          <Box sx={{ width: 300, height: "100%", display: "flex", flexDirection: "column" }}>
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", p: 2, background: "linear-gradient(90deg,#0d47a1,#1565c0)" }}>
-              <LogoImg src={Logo} alt="Logo" style={{ width: 85, filter: "brightness(10)", margin: 0 }} />
-              <IconButton onClick={() => setDrawerOpen(false)} sx={{ color: "white" }}>
+        <Drawer
+          anchor="left"
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+        >
+          <Box
+            sx={{
+              width: 300,
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                p: 2,
+                background: "linear-gradient(90deg,#0d47a1,#1565c0)",
+              }}
+            >
+              <LogoImg
+                src={Logo}
+                alt="Logo"
+                style={{ width: 85, filter: "brightness(10)", margin: 0 }}
+              />
+              <IconButton
+                onClick={() => setDrawerOpen(false)}
+                sx={{ color: "white" }}
+              >
                 <CloseIcon />
               </IconButton>
             </Box>
 
             <Box sx={{ p: 2, borderBottom: "1px solid #f0f0f0" }}>
-              <SearchTrigger style={{ margin: 0, width: "100%" }} onClick={() => { setDrawerOpen(false); setSearchOpen(true); }}>
+              <SearchTrigger
+                style={{ margin: 0, width: "100%" }}
+                onClick={() => {
+                  setDrawerOpen(false);
+                  setSearchOpen(true);
+                }}
+              >
                 <SearchIcon sx={{ color: "#bbb", fontSize: 17 }} />
                 <span style={{ fontSize: 13 }}>{placeholder}</span>
               </SearchTrigger>
@@ -601,26 +786,44 @@ export default function Header() {
                 <React.Fragment key={cat.id}>
                   <ListItem
                     button
-                    onClick={() => cat.children.length > 0 && setOpenMobileMenu(openMobileMenu === cat.id ? null : cat.id)}
+                    onClick={() =>
+                      cat.children.length > 0 &&
+                      setOpenMobileMenu(
+                        openMobileMenu === cat.id ? null : cat.id,
+                      )
+                    }
                     sx={{ borderBottom: "1px solid #f5f5f5", py: 1.5 }}
                   >
                     <ListItemText
                       primary={cat.label[lang]}
-                      primaryTypographyProps={{ fontSize: 14, fontWeight: 500, fontFamily: "Inter" }}
+                      primaryTypographyProps={{
+                        fontSize: 14,
+                        fontWeight: 500,
+                        fontFamily: "Inter",
+                      }}
                     />
-                    {cat.children.length > 0 && (
-                      openMobileMenu === cat.id
-                        ? <ExpandLessIcon sx={{ color: "#1976d2" }} />
-                        : <ExpandMoreIcon sx={{ color: "#ccc" }} />
-                    )}
+                    {cat.children.length > 0 &&
+                      (openMobileMenu === cat.id ? (
+                        <ExpandLessIcon sx={{ color: "#1976d2" }} />
+                      ) : (
+                        <ExpandMoreIcon sx={{ color: "#ccc" }} />
+                      ))}
                   </ListItem>
                   <Collapse in={openMobileMenu === cat.id}>
                     <List disablePadding sx={{ background: "#fafafa" }}>
                       {cat.children.map((child) => (
-                        <ListItem key={child.id} button sx={{ pl: 4, borderBottom: "1px solid #f0f0f0" }}>
+                        <ListItem
+                          key={child.id}
+                          button
+                          sx={{ pl: 4, borderBottom: "1px solid #f0f0f0" }}
+                        >
                           <ListItemText
                             primary={child.label[lang]}
-                            primaryTypographyProps={{ fontSize: 13, color: "#666", fontFamily: "Inter" }}
+                            primaryTypographyProps={{
+                              fontSize: 13,
+                              color: "#666",
+                              fontFamily: "Inter",
+                            }}
                           />
                         </ListItem>
                       ))}
@@ -630,12 +833,38 @@ export default function Header() {
               ))}
             </List>
 
-            <Box sx={{ p: 2, borderTop: "1px solid #f0f0f0", display: "flex", flexDirection: "column", gap: 2 }}>
+            <Box
+              sx={{
+                p: 2,
+                borderTop: "1px solid #f0f0f0",
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+              }}
+            >
               <Box sx={{ display: "flex", gap: 1 }}>
-                <IconBtn><FavoriteIcon sx={{ fontSize: 20 }} /></IconBtn>
-                <IconBtn style={{ position: "relative" }}>
-                  <ShoppingCartIcon sx={{ fontSize: 20 }} />
-                  <Badge>3</Badge>
+                <IconBtn onClick={() => navigate("/wishlist")}>
+                  <FavoriteIcon />
+                  <Badge>{wishCount || 0}</Badge>
+                  <span>
+                    {lang === "uz"
+                      ? "Sevimli"
+                      : lang === "ru"
+                        ? "Избранное"
+                        : "Wishlist"}
+                  </span>
+                </IconBtn>
+                <Divider />
+                <IconBtn onClick={() => navigate("/cart")}>
+                  <ShoppingCartIcon />
+                  <Badge>{cartCount || 0}</Badge>
+                  <span>
+                    {lang === "uz"
+                      ? "Savat"
+                      : lang === "ru"
+                        ? "Корзина"
+                        : "Cart"}
+                  </span>
                 </IconBtn>
               </Box>
               <SocialRow>

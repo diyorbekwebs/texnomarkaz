@@ -8,7 +8,7 @@ import TopProducts from "../../components/Topproducts/Topproducts";
 import Features from "../../components/features/Features";
 import Calculator from "../../components/calculator/Calculator";
 import Reviews from "../../components/reviews/Reviews";
-
+import ContactForm from "../../components/contactform/ContactForm";
 
 export default function Home() {
   return (
@@ -22,6 +22,7 @@ export default function Home() {
       <Features />
       <Calculator />
       <Reviews />
+      <ContactForm />
     </main>
   );
 }
